@@ -54,7 +54,7 @@ namespace TestBarcode
             var barcodeBitmap = (Bitmap) Image.FromFile("C:\\Users\\ASDF\\Desktop\\Test.jpg");
 			//Convert the image to an EmguCV frame
             var frame = new Image<Bgr, byte>(barcodeBitmap);
-			//Convert the image to an gray frame.
+			//Convert the image to a gray frame.
             var grayFrame = frame.Convert<Gray, byte>();
 			//Perform a threshold transformation (usually 87 to 170 is a good value for the first parameter).
             grayFrame = grayFrame.ThresholdBinary(new Gray(TrackBar.Value), new Gray(255));
@@ -63,6 +63,7 @@ namespace TestBarcode
             reader.Options.TryHarder = true;
 			//Set the barcode format.
             reader.Options.PossibleFormats = new List<BarcodeFormat> {BarcodeFormat.CODE_39};
+			//Specify some options.
             reader.Options.UseCode39ExtendedMode = true;
             reader.Options.UseCode39RelaxedExtendedMode = true;
 			//Decode and display barcode.
