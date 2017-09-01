@@ -10,23 +10,23 @@ The project was written and tested in .Net 4.6.2.
 
 The images below can be read by the barcode reader (because the rotation is correct according to an horizontal line):
 
-https://github.com/SeppPenner/EmguCVZXingBarcodeExample/blob/master/Images/Barcode_1.png
-https://github.com/SeppPenner/EmguCVZXingBarcodeExample/blob/master/Images/Barcode_2.png
+![](https://github.com/SeppPenner/EmguCVZXingBarcodeExample/blob/master/Images/Barcode_1.png)
+![](https://github.com/SeppPenner/EmguCVZXingBarcodeExample/blob/master/Images/Barcode_2.png)
 
 ## Images that can't be read:
 
 The image below can't be read by the barcode reader (because the rotation is wrong according to an horizontal line):
 
-https://github.com/SeppPenner/EmguCVZXingBarcodeExample/blob/master/Images/Barcode_3.png
+![](https://github.com/SeppPenner/EmguCVZXingBarcodeExample/blob/master/Images/Barcode_3.png)
 
 ## Example images that can be read:
 
-https://github.com/SeppPenner/EmguCVZXingBarcodeExample/blob/master/Images/barcode.png
-https://github.com/SeppPenner/EmguCVZXingBarcodeExample/blob/master/Images/barcode2.png
+![](https://github.com/SeppPenner/EmguCVZXingBarcodeExample/blob/master/Images/barcode.png)
+![](https://github.com/SeppPenner/EmguCVZXingBarcodeExample/blob/master/Images/barcode2.png)
 
 ## Example images that can't be read:
 
-https://github.com/SeppPenner/EmguCVZXingBarcodeExample/blob/master/Images/barcode3.png
+![](https://github.com/SeppPenner/EmguCVZXingBarcodeExample/blob/master/Images/barcode3.png)
 
 ## Example code:
 ```csharp
