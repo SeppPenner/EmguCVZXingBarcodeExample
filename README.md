@@ -1,7 +1,7 @@
 TestBarcode
 ====================================
 
-TestBarcode is an example project on how to read barcodes from an image with EmguCV and ZXing.
+TestBarcode is an example project on how to read barcodes from an image with [EmguCV](http://www.emgu.com/wiki/index.php/Main_Page) and [ZXing](https://github.com/micjahn/ZXing.Net). 
 The project was written and tested in .Net 4.6.2.
 
 [![Build status](https://ci.appveyor.com/api/projects/status/9id69y2gmy4okk30?svg=true)](https://ci.appveyor.com/project/SeppPenner/emgucvzxingbarcodeexample)
