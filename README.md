@@ -8,14 +8,14 @@ The project was written and tested in .Net 4.6.2.
 
 ## Images that can be read:
 
-The images below can be read by the barcode reader (because the rotation is correct according to an horizontal line):
+The images below can be read by the barcode reader (because the rotation is correct according to a horizontal line):
 
 ![](https://github.com/SeppPenner/EmguCVZXingBarcodeExample/blob/master/Images/Barcode_1.png)
 ![](https://github.com/SeppPenner/EmguCVZXingBarcodeExample/blob/master/Images/Barcode_2.png)
 
 ## Images that can't be read:
 
-The image below can't be read by the barcode reader (because the rotation is wrong according to an horizontal line):
+The image below can't be read by the barcode reader (because the rotation is wrong according to a horizontal line):
 
 ![](https://github.com/SeppPenner/EmguCVZXingBarcodeExample/blob/master/Images/Barcode_3.png)
 
