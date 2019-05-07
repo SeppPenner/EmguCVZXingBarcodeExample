@@ -1,10 +1,15 @@
-TestBarcode
+EmguCVZXingBarcodeExample
 ====================================
 
-TestBarcode is an example project on how to read barcodes from an image with [EmguCV](http://www.emgu.com/wiki/index.php/Main_Page) and [ZXing](https://github.com/micjahn/ZXing.Net). 
-The project was written and tested in .Net 4.7.
+EmguCVZXingBarcodeExample is an example project on how to read barcodes from an image with [EmguCV](http://www.emgu.com/wiki/index.php/Main_Page) and [ZXing](https://github.com/micjahn/ZXing.Net). 
+The project was written and tested in .Net 4.8.
 
 [![Build status](https://ci.appveyor.com/api/projects/status/9id69y2gmy4okk30?svg=true)](https://ci.appveyor.com/project/SeppPenner/emgucvzxingbarcodeexample)
+[![GitHub issues](https://img.shields.io/github/issues/SeppPenner/EmguCVZXingBarcodeExample.svg)](https://github.com/SeppPenner/EmguCVZXingBarcodeExample/issues)
+[![GitHub forks](https://img.shields.io/github/forks/SeppPenner/EmguCVZXingBarcodeExample.svg)](https://github.com/SeppPenner/EmguCVZXingBarcodeExample/network)
+[![GitHub stars](https://img.shields.io/github/stars/SeppPenner/EmguCVZXingBarcodeExample.svg)](https://github.com/SeppPenner/EmguCVZXingBarcodeExample/stargazers)
+[![GitHub license](https://img.shields.io/badge/license-AGPL-blue.svg)](https://raw.githubusercontent.com/SeppPenner/EmguCVZXingBarcodeExample/master/License.txt)
+[![Known Vulnerabilities](https://snyk.io/test/github/SeppPenner/EmguCVZXingBarcodeExample/badge.svg)](https://snyk.io/test/github/SeppPenner/EmguCVZXingBarcodeExample)
 
 ## Images that can be read:
 
@@ -50,23 +55,23 @@ namespace TestBarcode
         private void TestImage_Click(object sender, EventArgs e)
         {
             IBarcodeReader reader = new BarcodeReader();
-			//Load barcode file.
+            //Load barcode file.
             var barcodeBitmap = (Bitmap) Image.FromFile("C:\\Users\\ASDF\\Desktop\\Test.jpg");
-			//Convert the image to an EmguCV frame
+            //Convert the image to an EmguCV frame
             var frame = new Image<Bgr, byte>(barcodeBitmap);
-			//Convert the image to a gray frame.
+            //Convert the image to a gray frame.
             var grayFrame = frame.Convert<Gray, byte>();
-			//Perform a threshold transformation (usually 87 to 170 is a good value for the first parameter).
+            //Perform a threshold transformation (usually 87 to 170 is a good value for the first parameter).
             grayFrame = grayFrame.ThresholdBinary(new Gray(TrackBar.Value), new Gray(255));
-			//Show the read image.
+            //Show the read image.
             PictureBoxImage.Image = grayFrame.ToBitmap();
             reader.Options.TryHarder = true;
-			//Set the barcode format.
+            //Set the barcode format.
             reader.Options.PossibleFormats = new List<BarcodeFormat> {BarcodeFormat.CODE_39};
-			//Specify some options.
+            //Specify some options.
             reader.Options.UseCode39ExtendedMode = true;
             reader.Options.UseCode39RelaxedExtendedMode = true;
-			//Decode and display barcode.
+            //Decode and display barcode.
             var result = reader.Decode(grayFrame.ToBitmap());
             if (result != null)
             {
@@ -90,4 +95,5 @@ namespace TestBarcode
 Change history
 --------------
 
+* **Version 1.0.0.1 (2019-05-07)** : Updated .Net version to 4.8.
 * **Version 1.0.0.0 (2017-09-01)** : 1.0 release.
