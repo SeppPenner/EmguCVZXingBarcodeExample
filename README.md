@@ -33,6 +33,10 @@ The image below can't be read by the barcode reader (because the rotation is wro
 
 ![](https://github.com/SeppPenner/EmguCVZXingBarcodeExample/blob/master/Images/barcode3.png)
 
+## Known issues:
+
+https://stackoverflow.com/questions/65029152/c-sharp-how-to-convert-a-system-drawing-bitmap-to-a-emgucv-imagebgr-byte-and
+
 Change history
 --------------
 
