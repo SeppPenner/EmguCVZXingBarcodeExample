@@ -34,7 +34,7 @@
             this.PictureBoxImage = new System.Windows.Forms.PictureBox();
             this.TableLayoutPanelMain = new System.Windows.Forms.TableLayoutPanel();
             this.TrackBar = new System.Windows.Forms.TrackBar();
-            this.label1 = new System.Windows.Forms.Label();
+            this.Label = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.PictureBoxImage)).BeginInit();
             this.TableLayoutPanelMain.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.TrackBar)).BeginInit();
@@ -50,7 +50,7 @@
             this.ButtonStart.TabIndex = 0;
             this.ButtonStart.Text = "Bild konvertieren";
             this.ButtonStart.UseVisualStyleBackColor = true;
-            this.ButtonStart.Click += new System.EventHandler(this.TestImage_Click);
+            this.ButtonStart.Click += new System.EventHandler(this.TestImageClick);
             // 
             // RichTextBoxText
             // 
@@ -95,7 +95,7 @@
             this.TableLayoutPanelMain.Controls.Add(this.RichTextBoxText, 1, 1);
             this.TableLayoutPanelMain.Controls.Add(this.PictureBoxImage, 2, 2);
             this.TableLayoutPanelMain.Controls.Add(this.TrackBar, 2, 0);
-            this.TableLayoutPanelMain.Controls.Add(this.label1, 2, 1);
+            this.TableLayoutPanelMain.Controls.Add(this.Label, 2, 1);
             this.TableLayoutPanelMain.Dock = System.Windows.Forms.DockStyle.Fill;
             this.TableLayoutPanelMain.Location = new System.Drawing.Point(0, 0);
             this.TableLayoutPanelMain.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
@@ -117,17 +117,17 @@
             this.TrackBar.Size = new System.Drawing.Size(496, 45);
             this.TrackBar.TabIndex = 5;
             this.TrackBar.Value = 1;
-            this.TrackBar.Scroll += new System.EventHandler(this.TrackBar_Scroll);
+            this.TrackBar.Scroll += new System.EventHandler(this.TrackBarScroll);
             // 
             // label1
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(152, 81);
-            this.label1.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(35, 13);
-            this.label1.TabIndex = 6;
-            this.label1.Text = "label1";
+            this.Label.AutoSize = true;
+            this.Label.Location = new System.Drawing.Point(152, 81);
+            this.Label.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.Label.Name = "Label";
+            this.Label.Size = new System.Drawing.Size(35, 13);
+            this.Label.TabIndex = 6;
+            this.Label.Text = "label1";
             // 
             // Main
             // 
@@ -154,7 +154,7 @@
         private System.Windows.Forms.PictureBox PictureBoxImage;
         private System.Windows.Forms.TableLayoutPanel TableLayoutPanelMain;
         private System.Windows.Forms.TrackBar TrackBar;
-        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label Label;
     }
 }
 
