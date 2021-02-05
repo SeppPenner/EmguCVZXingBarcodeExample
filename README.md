@@ -11,29 +11,29 @@ The project was written and tested in .Net 5.0.
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://raw.githubusercontent.com/SeppPenner/EmguCVZXingBarcodeExample/master/License.txt)
 [![Known Vulnerabilities](https://snyk.io/test/github/SeppPenner/EmguCVZXingBarcodeExample/badge.svg)](https://snyk.io/test/github/SeppPenner/EmguCVZXingBarcodeExample)
 
-## Images that can be read:
+## Images that can be read
 
-The images below can be read by the barcode reader (because the rotation is correct according to a horizontal line):
+The images below can be read by the barcode reader (because the rotation is correct according to a horizontal line)
 
 ![](https://github.com/SeppPenner/EmguCVZXingBarcodeExample/blob/master/Images/Barcode_1.png)
 ![](https://github.com/SeppPenner/EmguCVZXingBarcodeExample/blob/master/Images/Barcode_2.png)
 
-## Images that can't be read:
+## Images that can't be read
 
-The image below can't be read by the barcode reader (because the rotation is wrong according to a horizontal line):
+The image below can't be read by the barcode reader (because the rotation is wrong according to a horizontal line)
 
 ![](https://github.com/SeppPenner/EmguCVZXingBarcodeExample/blob/master/Images/Barcode_3.png)
 
-## Example images that can be read:
+## Example images that can be read
 
 ![](https://github.com/SeppPenner/EmguCVZXingBarcodeExample/blob/master/Images/barcode.png)
 ![](https://github.com/SeppPenner/EmguCVZXingBarcodeExample/blob/master/Images/barcode2.png)
 
-## Example images that can't be read:
+## Example images that can't be read
 
 ![](https://github.com/SeppPenner/EmguCVZXingBarcodeExample/blob/master/Images/barcode3.png)
 
-## Known issues:
+## Known issues
 
 https://stackoverflow.com/questions/65029152/c-sharp-how-to-convert-a-system-drawing-bitmap-to-a-emgucv-imagebgr-byte-and
 
