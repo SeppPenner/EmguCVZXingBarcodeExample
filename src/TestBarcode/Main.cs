@@ -1,4 +1,4 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="Main.cs" company="Hämmer Electronics">
 //   Copyright (c) All rights reserved.
 // </copyright>
@@ -7,76 +7,75 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace TestBarcode
+namespace TestBarcode;
+
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Windows.Forms;
+
+using Emgu.CV;
+using Emgu.CV.Structure;
+
+using ZXing;
+
+/// <summary>
+/// The main form.
+/// </summary>
+public partial class Main : Form
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Drawing;
-    using System.Windows.Forms;
-
-    using Emgu.CV;
-    using Emgu.CV.Structure;
-
-    using ZXing;
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Main"/> class.
+    /// </summary>
+    public Main()
+    {
+        this.InitializeComponent();
+    }
 
     /// <summary>
-    /// The main form.
+    /// Handles the test image click.
     /// </summary>
-    public partial class Main : Form
+    /// <param name="sender">The sender.</param>
+    /// <param name="e">The event args.</param>
+    private void TestImageClick(object sender, EventArgs e)
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Main"/> class.
-        /// </summary>
-        public Main()
-        {
-            this.InitializeComponent();
-        }
+        var openFileDialog = new OpenFileDialog { Filter = "Png-Bilder|*.png", Multiselect = false};
 
-        /// <summary>
-        /// Handles the test image click.
-        /// </summary>
-        /// <param name="sender">The sender.</param>
-        /// <param name="e">The event args.</param>
-        private void TestImageClick(object sender, EventArgs e)
+        if (openFileDialog.ShowDialog() == DialogResult.OK)
         {
-            var openFileDialog = new OpenFileDialog { Filter = "Png-Bilder|*.png", Multiselect = false};
+            IBarcodeReader reader = new BarcodeReader();
+            var barcodeBitmap = (Bitmap)Image.FromFile(openFileDialog.FileName);
+            var frame = new Image<Bgr, byte>(barcodeBitmap);
+            var grayFrame = frame.Convert<Gray, byte>();
+            grayFrame = grayFrame.ThresholdBinary(new Gray(this.TrackBar.Value), new Gray(255));
+            this.PictureBoxImage.Image = grayFrame.ToBitmap();
+            reader.Options.TryHarder = true;
+            reader.Options.PossibleFormats = new List<BarcodeFormat> { BarcodeFormat.CODE_39 };
+            reader.Options.UseCode39ExtendedMode = true;
+            reader.Options.UseCode39RelaxedExtendedMode = true;
 
-            if (openFileDialog.ShowDialog() == DialogResult.OK)
+            var result = reader.Decode(grayFrame.ToBitmap());
+
+            if (result != null)
             {
-                IBarcodeReader reader = new BarcodeReader();
-                var barcodeBitmap = (Bitmap)Image.FromFile(openFileDialog.FileName);
-                var frame = new Image<Bgr, byte>(barcodeBitmap);
-                var grayFrame = frame.Convert<Gray, byte>();
-                grayFrame = grayFrame.ThresholdBinary(new Gray(this.TrackBar.Value), new Gray(255));
-                this.PictureBoxImage.Image = grayFrame.ToBitmap();
-                reader.Options.TryHarder = true;
-                reader.Options.PossibleFormats = new List<BarcodeFormat> { BarcodeFormat.CODE_39 };
-                reader.Options.UseCode39ExtendedMode = true;
-                reader.Options.UseCode39RelaxedExtendedMode = true;
-
-                var result = reader.Decode(grayFrame.ToBitmap());
-
-                if (result != null)
-                {
-                    this.RichTextBoxText.Text = result.BarcodeFormat.ToString();
-                    this.RichTextBoxContent.Text = result.Text;
-                    return;
-                }
-
-                this.RichTextBoxText.Text = string.Empty;
-                this.RichTextBoxContent.Text = string.Empty;
+                this.RichTextBoxText.Text = result.BarcodeFormat.ToString();
+                this.RichTextBoxContent.Text = result.Text;
+                return;
             }
-        }
 
-        /// <summary>
-        /// Handles the track bar scrolling.
-        /// </summary>
-        /// <param name="sender">The sender.</param>
-        /// <param name="e">The event args.</param>
-        private void TrackBarScroll(object sender, EventArgs e)
-        {
-            this.Label.Text = this.TrackBar.Value.ToString();
-            this.TestImageClick(sender, e);
+            this.RichTextBoxText.Text = string.Empty;
+            this.RichTextBoxContent.Text = string.Empty;
         }
+    }
+
+    /// <summary>
+    /// Handles the track bar scrolling.
+    /// </summary>
+    /// <param name="sender">The sender.</param>
+    /// <param name="e">The event args.</param>
+    private void TrackBarScroll(object sender, EventArgs e)
+    {
+        this.Label.Text = this.TrackBar.Value.ToString();
+        this.TestImageClick(sender, e);
     }
 }
