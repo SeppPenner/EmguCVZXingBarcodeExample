@@ -10,7 +10,6 @@
 namespace TestBarcode;
 
 using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -50,7 +49,7 @@ public partial class Main : Form
             grayFrame = grayFrame.ThresholdBinary(new Gray(this.TrackBar.Value), new Gray(255));
             this.PictureBoxImage.Image = grayFrame.ToBitmap();
             reader.Options.TryHarder = true;
-            reader.Options.PossibleFormats = new List<BarcodeFormat> { BarcodeFormat.CODE_39 };
+            reader.Options.PossibleFormats = [BarcodeFormat.CODE_39];
             reader.Options.UseCode39ExtendedMode = true;
             reader.Options.UseCode39RelaxedExtendedMode = true;
 
