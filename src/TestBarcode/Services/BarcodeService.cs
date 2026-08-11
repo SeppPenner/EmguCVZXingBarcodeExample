@@ -15,6 +15,7 @@ using System.IO;
 using Emgu.CV;
 using Emgu.CV.CvEnum;
 using Emgu.CV.Structure;
+using Emgu.CV.Util;
 
 using ZXing;
 using ZXing.EmguCV;
@@ -59,14 +60,7 @@ public class BarcodeService : IBarcodeService
             throw new FileNotFoundException("The image file doesn't exist.", fileName);
         }
 
-        // Unchanged keeps the alpha channel. ColorBgr would drop it and leave black behind every transparent
-        // pixel, which turns the white gaps of a barcode on a transparent background into black bars.
-        using var loadedImage = CvInvoke.Imread(fileName, ImreadModes.Unchanged);
-
-        if (loadedImage.IsEmpty)
-        {
-            throw new InvalidDataException($"The file {fileName} couldn't be read as an image.");
-        }
+        using var loadedImage = ReadImageFile(fileName);
 
         return loadedImage.NumberOfChannels == 4
             ? FlattenAlphaChannelOnWhite(loadedImage)
@@ -118,6 +112,28 @@ public class BarcodeService : IBarcodeService
         reader.Options.UseCode39ExtendedMode = true;
         reader.Options.UseCode39RelaxedExtendedMode = true;
         return reader.Decode(image);
+    }
+
+    /// <summary>
+    /// Reads an image file into a <see cref="Mat"/>.
+    /// </summary>
+    /// <param name="fileName">The name of the file to be read.</param>
+    /// <returns>The file as <see cref="Mat"/>, with as many channels as the file holds.</returns>
+    /// <exception cref="InvalidDataException">Thrown if the file isn't an image OpenCV can read.</exception>
+    private static Mat ReadImageFile(string fileName)
+    {
+        try
+        {
+            // Unchanged keeps the alpha channel. ColorBgr would drop it and leave black behind every transparent
+            // pixel, which turns the white gaps of a barcode on a transparent background into black bars.
+            return CvInvoke.Imread(fileName, ImreadModes.Unchanged);
+        }
+        catch (Exception ex) when (ex is ArgumentException or CvException)
+        {
+            // A file that holds no image throws an ArgumentException, an empty file a CvException. Both mean the
+            // same thing for a caller, so they are reported as one.
+            throw new InvalidDataException($"The file {fileName} couldn't be read as an image.", ex);
+        }
     }
 
     /// <summary>

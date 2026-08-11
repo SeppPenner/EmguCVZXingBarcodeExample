@@ -13,7 +13,8 @@ Beware of the names, nothing here is called like the repository:
 
 - The repository is `EmguCVZXingBarcodeExample`.
 - The solution is `src/TestBarcode.sln`.
-- The project is `src/TestBarcode/TestBarcode.csproj`, `OutputType` `WinExe`, `UseWindowsForms`.
+- The application is `src/TestBarcode/TestBarcode.csproj`, `OutputType` `WinExe`, `UseWindowsForms`.
+- The tests are `src/TestBarcode.Tests/TestBarcode.Tests.csproj`, MSTest, added in version 1.0.5.0.
 - The namespace is `TestBarcode`.
 
 Layout inside `src/TestBarcode`:
@@ -36,6 +37,17 @@ the reference for the rotation), `barcode.png`, `barcode2.png` and `barcode3.png
 example images. All six carry an alpha channel. The application does not read this folder by itself,
 the file is always picked in the dialog.
 
+Layout inside `src/TestBarcode.Tests`:
+
+- `BarcodeServiceTests.cs`: the size and the channel count of a loaded image, the flattened
+  transparent background, a missing file, a file that is no image, an empty file, the black and
+  white pixels, a threshold outside of the gray values, the conversion to a bitmap, and one test per
+  sample image for the claims the README makes about it.
+- `TestDataProvider.cs`: the barcode content `ABC-1234`, the threshold the tests use and the file
+  names of the six sample images.
+- There is no `TestData` folder in the repository. The project file links `..\Images\*.png` into one,
+  so the images exist exactly once and a test runs against the same file the README shows.
+
 Repository root: `README.md` (the only user documentation), `Changelog.md`, `License.txt` (MIT),
 `.gitattributes`, `.gitignore`. Below `src`: `.editorconfig` and `TestBarcode.sln.DotSettings`.
 There is no `.github` folder, no pipeline file, no `Directory.Build.props` and no `Updating.md`.
@@ -46,10 +58,15 @@ There is no `.github` folder, no pipeline file, no `Directory.Build.props` and n
 dotnet build src/TestBarcode.sln
 ```
 
-- Single target framework `net10.0-windows` in the one project, no multi-targeting.
-  `RuntimeIdentifiers` is `win-x64`.
-- All build properties live directly in `src/TestBarcode/TestBarcode.csproj`. There is **no**
-  `Directory.Build.props` in this repository.
+```powershell
+dotnet test src/TestBarcode.sln
+```
+
+- Single target framework `net10.0-windows` in both projects, no multi-targeting.
+  `RuntimeIdentifiers` is `win-x64` in the application. The test project needs the `-windows` suffix
+  as well, a plain `net10.0` project cannot reference the application.
+- All build properties live directly in the two `.csproj` files and are duplicated there. There is
+  **no** `Directory.Build.props` in this repository.
 - `TreatWarningsAsErrors` is enabled, so every warning breaks the build, NuGet warnings (`NU****`)
   from restore included. A clean build reports zero warnings, keep it that way.
 - `NU1803` (HTTP source usage during restore) is the one warning suppressed via `NoWarn`. Fix
@@ -60,8 +77,17 @@ dotnet build src/TestBarcode.sln
 - Restore needs nuget.org. If a private feed is configured globally on the machine and answers 404
   for public packages, restore fails with `NU1301`. Then build with an explicit source:
   `dotnet build src/TestBarcode.sln --source https://api.nuget.org/v3/index.json`.
-- There is no test project, so a behaviour change is verified by running the application: pick one
-  of the files in `src/Images`, move the track bar and look at the two rich text boxes.
+- Tests are MSTest, in the single test project `src/TestBarcode.Tests`, which follows the same
+  package set as the sibling repositories: `Microsoft.NET.Test.Sdk`, `MSTest.TestAdapter`,
+  `MSTest.TestFramework`, `coverlet.collector` and `GitVersion.MsBuild`. `dotnet test` runs 15
+  tests, they need no network and no fixture outside the repository. The two tests that write a file
+  use their own directory below `Path.GetTempPath()` and delete it afterwards, so a test run leaves
+  the working tree untouched. Never claim a test run happened without running it.
+- `dotnet test` does not take `--source`, so a run that needs the explicit feed has to restore first
+  with `dotnet restore src/TestBarcode.sln --source https://api.nuget.org/v3/index.json`.
+- The tests cover the service, not the form. Beyond them, a behaviour change of the user interface is
+  verified by running the application: pick one of the files in `src/Images`, move the track bar and
+  look at the two rich text boxes.
 
 ## Code conventions
 
@@ -109,6 +135,11 @@ Do not silently "clean up" these, they are existing behaviour:
   barcode unreadable. `LoadImage` therefore reads with `ImreadModes.Unchanged` and copies the pixels
   onto a white image. Partial transparency is not blended, the alpha channel of these files only
   holds 0 or 255.
+- **`LoadImage` maps two OpenCV exceptions onto one.** `CvInvoke.Imread` never returns an empty
+  `Mat` for a file it cannot read, it throws: an `ArgumentException` for a file that holds no image
+  and a `CvException` for an empty file. Both become an `InvalidDataException` with the original
+  exception as the inner one, so a caller can tell a broken file apart from a wrong argument of its
+  own. A test covers each of the two.
 - **The user interface is German, the code is English.** The button says `Bild konvertieren`, the
   file dialog filter says `Png-Bilder|*.png`. There is no language file and no resource lookup, the
   strings sit in the code. Comments, identifiers and commit messages stay English regardless.
