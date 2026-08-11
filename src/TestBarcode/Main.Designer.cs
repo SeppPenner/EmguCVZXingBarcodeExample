@@ -127,7 +127,7 @@
             this.Label.Name = "Label";
             this.Label.Size = new System.Drawing.Size(35, 13);
             this.Label.TabIndex = 6;
-            this.Label.Text = "label1";
+            this.Label.Text = "1";
             // 
             // Main
             // 
@@ -137,7 +137,7 @@
             this.Controls.Add(this.TableLayoutPanelMain);
             this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.Name = "Main";
-            this.Text = "Form1";
+            this.Text = "TestBarcode";
             ((System.ComponentModel.ISupportInitialize)(this.PictureBoxImage)).EndInit();
             this.TableLayoutPanelMain.ResumeLayout(false);
             this.TableLayoutPanelMain.PerformLayout();

@@ -10,19 +10,29 @@
 namespace TestBarcode;
 
 using System;
-using System.Drawing;
 using System.Windows.Forms;
 
 using Emgu.CV;
 using Emgu.CV.Structure;
 
-using ZXing;
+using TestBarcode.Services;
 
 /// <summary>
 /// The main form.
 /// </summary>
 public partial class Main : Form
 {
+    /// <summary>
+    /// The barcode service.
+    /// </summary>
+    private readonly IBarcodeService barcodeService = new BarcodeService();
+
+    /// <summary>
+    /// The image of the file that was picked last. It is kept so that moving the track bar thresholds that image
+    /// again instead of asking for a file once more.
+    /// </summary>
+    private Image<Bgr, byte>? pickedImage;
+
     /// <summary>
     /// Initializes a new instance of the <see cref="Main"/> class.
     /// </summary>
@@ -32,39 +42,35 @@ public partial class Main : Form
     }
 
     /// <summary>
+    /// Releases the images the form holds after it was closed.
+    /// </summary>
+    /// <param name="e">The event args.</param>
+    protected override void OnFormClosed(FormClosedEventArgs e)
+    {
+        base.OnFormClosed(e);
+        this.pickedImage?.Dispose();
+        this.pickedImage = null;
+        this.PictureBoxImage.Image?.Dispose();
+        this.PictureBoxImage.Image = null;
+    }
+
+    /// <summary>
     /// Handles the test image click.
     /// </summary>
     /// <param name="sender">The sender.</param>
     /// <param name="e">The event args.</param>
     private void TestImageClick(object sender, EventArgs e)
     {
-        var openFileDialog = new OpenFileDialog { Filter = "Png-Bilder|*.png", Multiselect = false};
+        using var openFileDialog = new OpenFileDialog { Filter = "Png-Bilder|*.png", Multiselect = false };
 
-        if (openFileDialog.ShowDialog() == DialogResult.OK)
+        if (openFileDialog.ShowDialog() != DialogResult.OK)
         {
-            IBarcodeReader reader = new BarcodeReader();
-            var barcodeBitmap = (Bitmap)Image.FromFile(openFileDialog.FileName);
-            var frame = new Image<Bgr, byte>(barcodeBitmap);
-            var grayFrame = frame.Convert<Gray, byte>();
-            grayFrame = grayFrame.ThresholdBinary(new Gray(this.TrackBar.Value), new Gray(255));
-            this.PictureBoxImage.Image = grayFrame.ToBitmap();
-            reader.Options.TryHarder = true;
-            reader.Options.PossibleFormats = [BarcodeFormat.CODE_39];
-            reader.Options.UseCode39ExtendedMode = true;
-            reader.Options.UseCode39RelaxedExtendedMode = true;
-
-            var result = reader.Decode(grayFrame.ToBitmap());
-
-            if (result != null)
-            {
-                this.RichTextBoxText.Text = result.BarcodeFormat.ToString();
-                this.RichTextBoxContent.Text = result.Text;
-                return;
-            }
-
-            this.RichTextBoxText.Text = string.Empty;
-            this.RichTextBoxContent.Text = string.Empty;
+            return;
         }
+
+        this.pickedImage?.Dispose();
+        this.pickedImage = this.barcodeService.LoadImage(openFileDialog.FileName);
+        this.ReadPickedImage();
     }
 
     /// <summary>
@@ -75,6 +81,26 @@ public partial class Main : Form
     private void TrackBarScroll(object sender, EventArgs e)
     {
         this.Label.Text = this.TrackBar.Value.ToString();
-        this.TestImageClick(sender, e);
+        this.ReadPickedImage();
+    }
+
+    /// <summary>
+    /// Thresholds the picked image with the current track bar value, shows the result and reads the barcode from it.
+    /// </summary>
+    private void ReadPickedImage()
+    {
+        if (this.pickedImage is null)
+        {
+            return;
+        }
+
+        using var blackAndWhiteImage = this.barcodeService.GetBlackAndWhiteImage(this.pickedImage, this.TrackBar.Value);
+        var shownImage = this.PictureBoxImage.Image;
+        this.PictureBoxImage.Image = blackAndWhiteImage.ToBitmap();
+        shownImage?.Dispose();
+
+        var result = this.barcodeService.ReadBarcode(blackAndWhiteImage);
+        this.RichTextBoxText.Text = result?.BarcodeFormat.ToString() ?? string.Empty;
+        this.RichTextBoxContent.Text = result?.Text ?? string.Empty;
     }
 }
