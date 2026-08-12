@@ -10,10 +10,12 @@
 namespace TestBarcode;
 
 using System;
+using System.IO;
 using System.Windows.Forms;
 
 using Emgu.CV;
 using Emgu.CV.Structure;
+using Emgu.CV.Util;
 
 using TestBarcode.Services;
 
@@ -68,9 +70,19 @@ public partial class Main : Form
             return;
         }
 
-        this.pickedImage?.Dispose();
-        this.pickedImage = this.barcodeService.LoadImage(openFileDialog.FileName);
-        this.ReadPickedImage();
+        try
+        {
+            // The picked image is replaced only after the new one is loaded, so a file that can't be read leaves
+            // the image that is already on screen alone.
+            var loadedImage = this.barcodeService.LoadImage(openFileDialog.FileName);
+            this.pickedImage?.Dispose();
+            this.pickedImage = loadedImage;
+            this.ReadPickedImage();
+        }
+        catch (Exception ex) when (IsFileError(ex))
+        {
+            ShowError(ex);
+        }
     }
 
     /// <summary>
@@ -81,7 +93,15 @@ public partial class Main : Form
     private void TrackBarScroll(object sender, EventArgs e)
     {
         this.Label.Text = this.TrackBar.Value.ToString();
-        this.ReadPickedImage();
+
+        try
+        {
+            this.ReadPickedImage();
+        }
+        catch (Exception ex) when (IsFileError(ex))
+        {
+            ShowError(ex);
+        }
     }
 
     /// <summary>
@@ -102,5 +122,26 @@ public partial class Main : Form
         var result = this.barcodeService.ReadBarcode(blackAndWhiteImage);
         this.RichTextBoxText.Text = result?.BarcodeFormat.ToString() ?? string.Empty;
         this.RichTextBoxContent.Text = result?.Text ?? string.Empty;
+    }
+
+    /// <summary>
+    /// Checks whether an exception is one of the errors an unreadable image file causes. Note that
+    /// <see cref="InvalidDataException"/> is no <see cref="IOException"/>, it derives from
+    /// <see cref="SystemException"/>, so it has to be named on its own.
+    /// </summary>
+    /// <param name="ex">The <see cref="Exception"/> to be checked.</param>
+    /// <returns><c>true</c> if the exception belongs to the file, <c>false</c> if it is a bug of this program.</returns>
+    private static bool IsFileError(Exception ex)
+    {
+        return ex is IOException or InvalidDataException or UnauthorizedAccessException or CvException;
+    }
+
+    /// <summary>
+    /// Shows an error in a message box. The title is German because the rest of this user interface is.
+    /// </summary>
+    /// <param name="ex">The <see cref="Exception"/> to be shown.</param>
+    private static void ShowError(Exception ex)
+    {
+        MessageBox.Show(ex.Message, "Fehler", MessageBoxButtons.OK, MessageBoxIcon.Error);
     }
 }

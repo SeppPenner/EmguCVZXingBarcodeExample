@@ -153,6 +153,15 @@ Do not silently "clean up" these, they are existing behaviour:
   `GetBlackAndWhiteImage`, the label next to it shows that value. Moving it thresholds and reads the
   image that is already loaded again, it does not ask for a file. The initial value is 1, and the
   designer sets the label to `1` to match it, so both live next to each other in the same file.
+- **The form reports a bad file, not a bad program.** Both event handlers catch `IOException`,
+  `InvalidDataException`, `UnauthorizedAccessException` and `CvException` and show the message of the
+  exception in a message box titled `Fehler`. Everything else is left to crash on purpose, a demo
+  should not swallow its own bugs. Watch out when touching that filter: `InvalidDataException`, the
+  exception `LoadImage` throws for a broken file, does **not** derive from `IOException`, it derives
+  from `SystemException`, so it has to be named on its own.
+- **A failed load keeps the image that is already shown.** `LoadImage` is called into a local first,
+  the previous image is disposed only after it returned. Picking a broken file therefore does not
+  clear the window.
 - **The form owns two images and releases them itself.** `pickedImage` is the loaded file, kept for
   the next track bar move, and `PictureBoxImage.Image` is the bitmap on screen. A picture box does
   not dispose the image it shows, so both are released in `OnFormClosed` and the previous bitmap is
